@@ -1,6 +1,14 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import app
+
+if 'dfs' not in st.session_state:
+    st.session_state.dfs = []
+
+st.title("Analisador de Dados Interativo")
+
+st.session_state['dfs'] = []
 
 #pegando o arquivo csv do usuario e transformando num data framde
 uploaded_files = st.file_uploader("Envie o arquivo csv.", accept_multiple_files=True, type="csv")
@@ -13,12 +21,12 @@ for uploaded_file in uploaded_files:
     df_temp = pd.read_csv(uploaded_file)
     dfs.append(df_temp)
 
-#variavel que contem o nome das colunas do data frame
-colunas = dfs[0].columns
+#verifica se o data frame possui algo pra o armazenar
+if dfs:
+    st.session_state['dfs'] = dfs
 
-#variavel que guarda o valor das colunas que o usuario quer ver
-choices = st.multiselect("Quais colunas deseja analisar", colunas)
-
-#botao pra criar uma visualização grafica do data frame com os filtros
-if st.button("OK"):
-    st.dataframe(dfs[0][choices])
+#verifica pra executar o app
+if st.session_state.dfs:
+    app.App()
+    #botao pra criar uma visualização grafica do data frame com os filtros
+    
